@@ -1,6 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-const ImageWithLoader = ({ src, alt, className }: { src: string, alt: string, className?: string }) => {
+const ImageWithLoader = ({
+  src,
+  alt,
+  className,
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) => {
   const [loaded, setLoaded] = useState(false);
 
   return (
@@ -13,7 +21,9 @@ const ImageWithLoader = ({ src, alt, className }: { src: string, alt: string, cl
       <img
         src={src}
         alt={alt}
-        className={`${className} transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} w-28 h-auto`}
+        className={`${className} transition-opacity duration-500 ${
+          loaded ? "opacity-100" : "opacity-0"
+        } w-28 h-auto`}
         onLoad={() => setLoaded(true)}
       />
     </div>

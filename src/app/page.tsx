@@ -4,15 +4,26 @@ import { v4 as uuidv4 } from "uuid";
 import ImageWithLoader from "./components/ImageWithLoader";
 import Shimmer from "./components/Shimmer";
 
+type ImageResult = {
+  filename: string;
+  originalUrl: string;
+  compressedUrl: string;
+  originalSize: number;
+  compressedSize: number;
+};
+
 export default function Home() {
   const localUrl = "http://localhost:5000";
 
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<ImageResult[]>([]);
   const [zipUrl, setZipUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState("");
 
-  const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleUpload = async (
+    e: React.FormEvent<HTMLFormElement> | React.ChangeEvent<HTMLInputElement>
+  ) => {
+    e.preventDefault?.(); // Only call if it's a form event
     e.preventDefault();
     setLoading(true);
 
@@ -102,8 +113,8 @@ export default function Home() {
 
   const { totalOriginal, totalCompressed } = results.reduce(
     (acc, item) => {
-      acc.totalOriginal += item.originalSize || 0;
-      acc.totalCompressed += item.compressedSize || 0;
+      acc.totalOriginal += item?.originalSize || 0;
+      acc.totalCompressed += item?.compressedSize || 0;
       return acc;
     },
     { totalOriginal: 0, totalCompressed: 0 }
@@ -204,7 +215,9 @@ export default function Home() {
                     svg: "bg-pink-600",
                     default: "bg-gray-600",
                   };
-                  const badgeColor = badgeColors[ext] || badgeColors.default;
+                  const badgeColor =
+                    badgeColors[ext as keyof typeof badgeColors] ||
+                    badgeColors.default;
 
                   return (
                     <div
@@ -213,7 +226,7 @@ export default function Home() {
                     >
                       {/* Thumbnail */}
                       <div className="flex items-center gap-4">
-                        <img
+                        <ImageWithLoader
                           src={`${localUrl}${item.compressedUrl}`}
                           alt="Thumbnail"
                           className="w-12 h-12 rounded object-cover border"

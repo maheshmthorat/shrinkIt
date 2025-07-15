@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Upload & Compress Images</title>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        padding: 8px;
+      }
+      img {
+        max-width: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Upload Images</h2>
+    <form id="uploadForm">
+      <input type="file" name="images" id="images" required />
+      <button type="submit">Upload & Compress</button>
+    </form>
+
+    <h3>Results:</h3>
+    <table id="resultTable" style="display: none">
+      <thead>
+        <tr>
+          <th>Original</th>
+          <th>Compressed</th>
+          <th>Original Size</th>
+          <th>Compressed Size</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      const table = document.getElementById("resultTable");
+      const tbody = table.querySelector("tbody");
+
+      document
+        .getElementById("uploadForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          if (document.getElementById("zip-link")) {
+            document.getElementById("zip-link").remove();
+          }
+          const formData = new FormData();
+          const files = document.getElementById("images").files;
+          for (let i = 0; i < files.length; i++) {
+            formData.append("images", files[i]);
+          }
+
+          const res = await fetch("/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await res.json();
+
+          table.style.display = "";
+
+          data.images.forEach((item) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+        <td><img src="${item.originalUrl}" /></td>
+        <td><img src="${item.compressedUrl}" /></td>
+        <td>${(item.originalSize / 1024).toFixed(1)} KB</td>
+        <td>${(item.compressedSize / 1024).toFixed(1)} KB</td>
+        <td><a href="${item.compressedUrl}" download>Download</a></td>
+      `;
+            tbody.appendChild(row);
+          });
+
+          if (!document.getElementById("zip-link")) {
+            const zipRow = document.createElement("tr");
+            zipRow.innerHTML = `
+        <td colspan="5" style="text-align:center">
+          <a id="zip-link" href="${data.zipUrl}" download>Download All (ZIP)</a>
+        </td>`;
+            tbody.appendChild(zipRow);
+          }
+        });
+    </script>
+  </body>
+</html>

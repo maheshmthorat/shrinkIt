@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "cwebp-bin": "^8.0.0",
+    "express": "^5.1.0",
+    "gifsicle": "^7.0.1",
+    "glob": "^7.2.3",
+    "imagemin": "^8.0.1",
+    "imagemin-svgo": "^10.0.1",
+    "mozjpeg": "^8.0.0",
+    "multer": "^2.0.1",
+    "pngquant-bin": "^6.0.1",
+    "sharp": "^0.33.5",
+    "svgo": "^4.0.0"
+  },
+  "devDependencies": {
+    "compress-images": "^2.0.5"
+  }
+}

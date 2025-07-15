@@ -13,7 +13,7 @@ type ImageResult = {
 };
 
 export default function Home() {
-  const localUrl = "http://localhost:5000";
+  const localUrl = "/api";
 
   const [results, setResults] = useState<ImageResult[]>([]);
   const [zipUrl, setZipUrl] = useState("");
@@ -42,7 +42,7 @@ export default function Home() {
     });
 
     const data = await res.json();
-    setResults(() => [...data.images]);
+    setResults((prev) => [...prev, ...data.images]);
     setZipUrl(data.zipUrl || zipUrl);
     setLoading(false);
   };
@@ -59,7 +59,7 @@ export default function Home() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setResults(() => [...data.images]);
+        setResults((prev) => [...prev, ...data.images]);
         setLoading(false);
       })
       .catch((err) => console.error("Upload failed", err));
@@ -98,7 +98,7 @@ export default function Home() {
     }
     setSessionId(sessionId);
 
-    fetch(`${localUrl}/session/images?sessionId=${sessionId}`, {
+    fetch(`${localUrl}/images?sessionId=${sessionId}`, {
       credentials: "include",
     })
       .then((res) => res.json())

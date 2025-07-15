@@ -13,7 +13,6 @@ const PORT = 5000;
 
 const allowedOrigins = ["http://localhost:3000", "http://192.168.2.27:3000", "https://shrink--it.vercel.app/"];
 
-// ✅ CORS with credentials
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -29,7 +28,6 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Serve static files
 app.use("/tmp", express.static("tmp"));
 app.use(express.static("public"));
 
@@ -102,7 +100,6 @@ function compressCallback(sessionId, res) {
   );
 }
 
-// ✅ Upload endpoint with session-based cookie
 app.post("/upload", (req, res) => {
   const sessionId = req.query.sessionId;
 

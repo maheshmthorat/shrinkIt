@@ -112,7 +112,6 @@ app.post("/upload", (req, res) => {
   upload.array("images")(req, res, function (err) {
     if (err) return res.status(500).send("Upload failed");
 
-    console.log("Session:", sessionId);
     compressCallback(sessionId, res);
   });
 });

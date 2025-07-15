@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React, { useState } from "react";
 
 const ImageWithLoader = ({
@@ -18,12 +19,13 @@ const ImageWithLoader = ({
           <div className="w-6 h-6 border-4 border-blue-300 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
-      <img
-        src={src}
+      <Image
+        src={src} // must be base64 string
         alt={alt}
-        className={`${className} transition-opacity duration-500 ${
-          loaded ? "opacity-100" : "opacity-0"
-        } w-28 h-auto`}
+        width={112} // equivalent to w-28 (28 * 4)
+        height={112}
+        className={className}
+        unoptimized
         onLoad={() => setLoaded(true)}
       />
     </div>

@@ -11,9 +11,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'No session cookie found' }, { status: 400 });
   }
 
-  const inputPath = path.join(process.cwd(), 'public/uploads', sessionId, 'original');
-  const outputPath = path.join(process.cwd(), 'public/uploads', sessionId, 'compressed');
-  const zipPath = path.join(process.cwd(), 'public/uploads', sessionId, 'compressed.zip');
+  const inputPath = path.join('/tmp', sessionId, 'input');
+  const outputPath = path.join('/tmp', sessionId, 'output');
+  const zipPath = path.join('/tmp', sessionId, 'compressed.zip');
 
   if (!fs.existsSync(outputPath)) {
     return NextResponse.json({ error: 'No compressed images for this session' }, { status: 404 });
@@ -31,17 +31,26 @@ export async function GET(req: NextRequest) {
       ? fs.statSync(originalFile).size
       : 0;
 
+    // Read file as base64
+    const compressedBase64 = fs.existsSync(compressedFile)
+      ? `data:image/${path.extname(file).replace('.', '')};base64,${fs.readFileSync(compressedFile).toString('base64')}`
+      : '';
+
+    const originalBase64 = fs.existsSync(originalFile)
+      ? `data:image/${path.extname(file).replace('.', '')};base64,${fs.readFileSync(originalFile).toString('base64')}`
+      : '';
+
     return {
       filename: file,
-      originalUrl: `/../uploads/${sessionId}/original/${file}`,
-      compressedUrl: `/../uploads/${sessionId}/compressed/${file}`,
       originalSize,
       compressedSize,
+      originalBase64,
+      compressedBase64,
     };
   });
 
   return NextResponse.json({
     images: files,
-    zipUrl: fs.existsSync(zipPath) ? `/tmp/${sessionId}/compressed.zip` : null,
+    zipUrl: fs.existsSync(zipPath) ? `/tmp/${sessionId}/compressed.zip` : null, // You can omit or fake this
   });
 }

@@ -6,8 +6,8 @@ import Shimmer from "./components/Shimmer";
 
 type ImageResult = {
   filename: string;
-  originalUrl: string;
-  compressedUrl: string;
+  originalBase64: string;
+  compressedBase64: string;
   originalSize: number;
   compressedSize: number;
 };
@@ -227,7 +227,7 @@ export default function Home() {
                       {/* Thumbnail */}
                       <div className="flex items-center gap-4">
                         <ImageWithLoader
-                          src={`${localUrl}${item.compressedUrl}`}
+                          src={`${item.compressedBase64}`}
                           alt="Thumbnail"
                           className="w-12 h-12 rounded object-cover border"
                         />
@@ -255,7 +255,7 @@ export default function Home() {
                           -{percentSaved.toFixed(0)}%
                         </span>
                         <a
-                          href={`${localUrl}${item.compressedUrl}`}
+                          href={`${item.compressedBase64}`}
                           download
                           className="bg-blue-100 hover:bg-blue-200 text-blue-600 font-semibold text-xs px-3 py-1 rounded flex items-center gap-1"
                         >

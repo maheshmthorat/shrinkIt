@@ -11,7 +11,7 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = 5000;
 
-const allowedOrigins = ["http://localhost:3000", "http://192.168.2.27:3000"];
+const allowedOrigins = ["http://localhost:3000", "http://192.168.2.27:3000", "https://shrink--it.vercel.app/"];
 
 // ✅ CORS with credentials
 app.use(cors({

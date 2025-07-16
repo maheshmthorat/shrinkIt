@@ -1,22 +1,27 @@
-import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  const sessionId = req.nextUrl.searchParams.get('sessionId');
+  const sessionId = req.nextUrl.searchParams.get("sessionId");
 
   if (!sessionId) {
-    return NextResponse.json({ error: 'No session cookie found' }, { status: 400 });
+    return NextResponse.json(
+      { error: "No session cookie found" },
+      { status: 400 }
+    );
   }
 
-  const inputPath = path.join('/tmp', sessionId, 'input');
-  const outputPath = path.join('/tmp', sessionId, 'output');
-  const zipPath = path.join('/tmp', sessionId, 'compressed.zip');
+  const inputPath = path.join("/tmp", sessionId, "input");
+  const outputPath = path.join("/tmp", sessionId, "output");
 
   if (!fs.existsSync(outputPath)) {
-    return NextResponse.json({ error: 'No compressed images for this session' }, { status: 404 });
+    return NextResponse.json(
+      { error: "No compressed images for this session" },
+      { status: 404 }
+    );
   }
 
   const files = fs.readdirSync(outputPath).map((file) => {
@@ -33,12 +38,16 @@ export async function GET(req: NextRequest) {
 
     // Read file as base64
     const compressedBase64 = fs.existsSync(compressedFile)
-      ? `data:image/${path.extname(file).replace('.', '')};base64,${fs.readFileSync(compressedFile).toString('base64')}`
-      : '';
+      ? `data:image/${path.extname(file).replace(".", "")};base64,${fs
+          .readFileSync(compressedFile)
+          .toString("base64")}`
+      : "";
 
     const originalBase64 = fs.existsSync(originalFile)
-      ? `data:image/${path.extname(file).replace('.', '')};base64,${fs.readFileSync(originalFile).toString('base64')}`
-      : '';
+      ? `data:image/${path.extname(file).replace(".", "")};base64,${fs
+          .readFileSync(originalFile)
+          .toString("base64")}`
+      : "";
 
     return {
       filename: file,
@@ -51,6 +60,6 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     images: files,
-    zipUrl: fs.existsSync(zipPath) ? `/tmp/${sessionId}/compressed.zip` : null, // You can omit or fake this
+    zipUrl: `/api/download?sessionId=${sessionId}`,
   });
 }

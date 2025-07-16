@@ -38,9 +38,7 @@ export async function POST(req: NextRequest) {
       await fs.writeFile(originalPath, buffer);
 
       // Compress
-      await sharp(buffer)
-        .jpeg({ quality: 60 })
-        .toFile(compressedPath);
+      await sharp(buffer).jpeg({ quality: 60 }).toFile(compressedPath);
 
       const compressedBuffer = await fs.readFile(compressedPath);
 
@@ -49,14 +47,20 @@ export async function POST(req: NextRequest) {
         originalSize: buffer.length,
         compressedSize: compressedBuffer.length,
         // These won't be public URLs, but just for your frontend to show previews
-        originalBase64: `data:image/${fileExt.replace('.', '')};base64,${buffer.toString("base64")}`,
-        compressedBase64: `data:image/${fileExt.replace('.', '')};base64,${compressedBuffer.toString("base64")}`,
+        originalBase64: `data:image/${fileExt.replace(
+          ".",
+          ""
+        )};base64,${buffer.toString("base64")}`,
+        compressedBase64: `data:image/${fileExt.replace(
+          ".",
+          ""
+        )};base64,${compressedBuffer.toString("base64")}`,
       };
     })
   );
 
   return NextResponse.json({
     images: resultList,
-    zipUrl: null,
+    zipUrl: `/api/download?sessionId=${sessionId}`,
   });
 }

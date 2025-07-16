@@ -47,6 +47,7 @@ export default function Home() {
     setResults((prev) => [...prev, ...data.images]);
     setZipUrl(data.zipUrl || zipUrl);
     setLoading(false);
+    setError(null)
   };
 
   const handleFiles = (files: FileList) => {

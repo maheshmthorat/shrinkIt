@@ -15,19 +15,20 @@ type ImageResult = {
 
 export default function Home() {
   const localUrl = "/api";
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const [results, setResults] = useState<ImageResult[]>([]);
   const [zipUrl, setZipUrl] = useState("");
-  const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const handleUpload = async (
     e: React.FormEvent<HTMLFormElement> | React.ChangeEvent<HTMLInputElement>
   ) => {
-    e.preventDefault?.(); // Only call if it's a form event
+    e.preventDefault?.();
     e.preventDefault();
-    setLoading(true);
+    setActionLoading(true);
 
     const formData = new FormData();
     const files = (document.getElementById("images") as HTMLInputElement).files;
@@ -44,10 +45,10 @@ export default function Home() {
     });
 
     const data = await res.json();
-    setResults((prev) => [...prev, ...data.images]);
+    setResults((prev) => [...data.images, ...prev]);
     setZipUrl(data.zipUrl || zipUrl);
-    setLoading(false);
-    setError(null)
+    setActionLoading(false);
+    setError(null);
   };
 
   const handleFiles = (files: FileList) => {
@@ -62,7 +63,7 @@ export default function Home() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setResults((prev) => [...prev, ...data.images]);
+        setResults((prev) => [...data.images, ...prev]);
         setLoading(false);
       })
       .catch((err) => console.error("Upload failed", err));
@@ -212,13 +213,19 @@ export default function Home() {
           />
         </label>
       </form>
-      <div className="mt-10 bg-gray-50 rounded-xl shadow-lg p-6 max-w-screen-lg mx-auto">
+      <div className="mt-10 bg-gray-50 rounded-xl shadow-lg p-4 sm:p-6 max-w-screen-lg mx-auto">
         <div className="">
           {error && (
             <div className="text-red-600 bg-red-100 p-2 rounded">{error}</div>
           )}
+
           {loading ? (
-            <Shimmer />
+            <div className="space-y-4 mt-4">
+              <Shimmer />
+              <Shimmer />
+              <Shimmer />
+              <Shimmer />
+            </div>
           ) : (
             <>
               {results.length > 0 && (
@@ -234,6 +241,7 @@ export default function Home() {
                         saved
                       </p>
                     </div>
+                    {actionLoading && <Shimmer />}
 
                     {results.map((item, idx) => {
                       const originalKB = item.originalSize / 1024;
@@ -255,19 +263,19 @@ export default function Home() {
                       return (
                         <div
                           key={idx}
-                          className="bg-white rounded-lg shadow flex items-center px-4 py-3 justify-between"
+                          className="bg-white rounded-lg shadow px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 "
                         >
                           <div className="flex items-center gap-4">
                             <ImageWithLoader
                               src={`${item.compressedBase64}`}
                               alt="Thumbnail"
-                              className="w-12 h-12 rounded object-cover border"
+                              className="w-20 h-20 rounded object-cover border"
                             />
-                            <div>
-                              <p className="font-medium text-sm text-gray-800">
+                            <div className="flex flex-col gap-2">
+                              <p className="font-medium text-sm text-gray-800 break-all">
                                 {item.filename}
                               </p>
-                              <div className="flex items-center gap-2 mt-1">
+                              <div className="flex items-center gap-2">
                                 <span className="bg-blue-100 text-blue-600 font-semibold text-xs px-3 py-1 rounded flex items-center gap-1">
                                   {ext?.toUpperCase()}
                                 </span>
@@ -275,40 +283,39 @@ export default function Home() {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-4">
-                            <div className="flex flex-col gap-1 text-sm text-gray-700">
+                          <div className="flex flex-col gap-2 text-sm text-gray-700 w-full sm:w-auto">
+                            <div className="flex justify-between items-center gap-2">
                               <div>
                                 <strong>Original:</strong>{" "}
                                 {originalKB.toFixed(0)} KB
                               </div>
+                              <a
+                                href={item.compressedBase64}
+                                download
+                                className="bg-blue-100 hover:bg-blue-200 text-blue-600 font-semibold text-xs px-4 py-2 rounded flex items-center gap-1 w-max"
+                              >
+                                <Image
+                                  alt="file"
+                                  src="/file.svg"
+                                  width={18}
+                                  height={16}
+                                />
+                                {ext?.toUpperCase()}
+                              </a>
+                            </div>
+                            <div className="flex justify-between items-center gap-2">
                               <div>
                                 <strong>Compressed:</strong>{" "}
                                 {compressedKB.toFixed(0)} KB
                               </div>
+                              <span className="text-xs text-green-800 bg-green-100 px-3 py-1.5 rounded-full font-bold text-center w-max">
+                                {percentSaved > 0
+                                  ? `Saved ${percentSaved.toFixed(0)}%`
+                                  : `+${Math.abs(percentSaved).toFixed(
+                                      0
+                                    )}% larger`}
+                              </span>
                             </div>
-                            <span
-                              className={`text-xs text-green-800 bg-green-100 px-3 py-1.5 rounded-full font-bold`}
-                            >
-                              {percentSaved > 0
-                                ? `Saved ${percentSaved.toFixed(0)}%`
-                                : `+${Math.abs(percentSaved).toFixed(
-                                    0
-                                  )}% larger`}
-                            </span>
-
-                            <a
-                              href={`${item.compressedBase64}`}
-                              download
-                              className="bg-blue-100 hover:bg-blue-200 text-blue-600 font-semibold text-xs px-4 py-2 rounded flex items-center gap-1"
-                            >
-                              <Image
-                                alt="file"
-                                src={"/file.svg"}
-                                width={18}
-                                height={16}
-                              />{" "}
-                              {ext?.toUpperCase()}
-                            </a>
                           </div>
                         </div>
                       );

@@ -13,7 +13,7 @@ const ImageWithLoader = ({
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className="relative w-28 h-28 flex items-center justify-center">
+    <div className="w-20 h-20 bg-gray-200 rounded object-cover">
       {!loaded && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-6 h-6 border-4 border-blue-300 border-t-transparent rounded-full animate-spin" />
@@ -22,8 +22,8 @@ const ImageWithLoader = ({
       <Image
         src={src} // must be base64 string
         alt={alt}
-        width={112} // equivalent to w-28 (28 * 4)
-        height={112}
+        width={212} // equivalent to w-28 (28 * 4)
+        height={212}
         className={className}
         unoptimized
         onLoad={() => setLoaded(true)}

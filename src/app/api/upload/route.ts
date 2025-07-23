@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       await fs.writeFile(originalPath, buffer);
 
       // Compress
-      await sharp(buffer).jpeg({ quality: 60 }).toFile(compressedPath);
+      await sharp(buffer).jpeg({ quality: 50 }).toFile(compressedPath);
 
       const compressedBuffer = await fs.readFile(compressedPath);
 

@@ -14,7 +14,7 @@ const Shimmer = () => {
       <div className="flex flex-col gap-2 text-sm text-gray-700 w-full sm:w-auto">
         <div className="flex justify-between items-center gap-2">
           <div className="shimmer h-4 w-40 bg-gray-200 rounded" />
-          <div className="h-8 w-20 bg-blue-100 rounded" />
+          <div className="h-8 w-22 bg-blue-100 rounded" />
         </div>
         <div className="flex justify-between items-center gap-2">
           <div className="shimmer h-4 w-40 bg-gray-200 rounded" />

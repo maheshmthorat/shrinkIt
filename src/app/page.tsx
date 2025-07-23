@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ImageWithLoader from "./components/ImageWithLoader";
 import Shimmer from "./components/Shimmer";
-import Image from "next/image";
 
 type ImageResult = {
   filename: string;
@@ -29,6 +28,7 @@ export default function Home() {
     e.preventDefault?.();
     e.preventDefault();
     setActionLoading(true);
+    setError(null);
 
     const formData = new FormData();
     const files = (document.getElementById("images") as HTMLInputElement).files;
@@ -48,7 +48,6 @@ export default function Home() {
     setResults((prev) => [...data.images, ...prev]);
     setZipUrl(data.zipUrl || zipUrl);
     setActionLoading(false);
-    setError(null);
   };
 
   const handleFiles = (files: FileList) => {
@@ -144,30 +143,6 @@ export default function Home() {
         <h1 className="text-3xl font-bold text-center mb-6">
           ShrinkIt - Image Compressor
         </h1>
-
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">
-          ✨ Why use ShrinkIt?
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-700">
-          <div className="bg-white p-4 rounded shadow">
-            📦 Compress JPEG, PNG, SVG, GIF
-          </div>
-          <div className="bg-white p-4 rounded shadow">
-            ⚡ Instant image preview & size stats
-          </div>
-          <div className="bg-white p-4 rounded shadow">
-            📉 Save up to 80% size
-          </div>
-          <div className="bg-white p-4 rounded shadow">
-            🧠 Smart image compression with Sharp
-          </div>
-          <div className="bg-white p-4 rounded shadow">
-            ⬇️ Bulk upload & zip download support
-          </div>
-          <div className="bg-white p-4 rounded shadow">
-            🆓 100% Free & works in your browser
-          </div>
-        </div>
       </section>
 
       <form
@@ -205,7 +180,6 @@ export default function Home() {
             type="file"
             id="images"
             name="images"
-            multiple
             required
             accept="image/*"
             className="hidden"
@@ -213,6 +187,7 @@ export default function Home() {
           />
         </label>
       </form>
+
       <div className="mt-10 bg-gray-50 rounded-xl shadow-lg p-4 sm:p-6 max-w-screen-lg mx-auto">
         <div className="">
           {error && (
@@ -228,6 +203,8 @@ export default function Home() {
             </div>
           ) : (
             <>
+              {results.length == 0 && actionLoading && <Shimmer />}
+
               {results.length > 0 && (
                 <>
                   <div className="space-y-4 mt-4">
@@ -267,7 +244,9 @@ export default function Home() {
                         >
                           <div className="flex items-center gap-4">
                             <ImageWithLoader
-                              src={`${item.compressedBase64}`}
+                              item={item}
+                              compressedBase64={`${item.compressedBase64}`}
+                              originalBase64={`${item.originalBase64}`}
                               alt="Thumbnail"
                               className="w-20 h-20 rounded object-cover border"
                             />
@@ -292,15 +271,19 @@ export default function Home() {
                               <a
                                 href={item.compressedBase64}
                                 download
-                                className="bg-blue-100 hover:bg-blue-200 text-blue-600 font-semibold text-xs px-4 py-2 rounded flex items-center gap-1 w-max"
+                                className="bg-blue-100 hover:bg-blue-200 text-blue-600 font-semibold text-xs px-2 py-2 rounded flex items-center gap-1 w-max"
                               >
-                                <Image
-                                  alt="file"
-                                  src="/file.svg"
-                                  width={18}
-                                  height={16}
-                                />
-                                {ext?.toUpperCase()}
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="18"
+                                  height="18"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                  className="text-blue-600"
+                                >
+                                  <path d="M12 16l4-5h-3V4h-2v7H8l4 5zM5 18h14v2H5z" />
+                                </svg>
+                                Download
                               </a>
                             </div>
                             <div className="flex justify-between items-center gap-2">
@@ -340,6 +323,31 @@ export default function Home() {
         </div>
       </div>
 
+      <section className="mt-10 max-w-4xl mx-auto text-center mb-10">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">
+          ✨ Why use ShrinkIt?
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-700">
+          <div className="bg-white p-4 rounded shadow">
+            📦 Compress JPEG, PNG, SVG, GIF
+          </div>
+          <div className="bg-white p-4 rounded shadow">
+            ⚡ Instant image preview & size stats
+          </div>
+          <div className="bg-white p-4 rounded shadow">
+            📉 Save up to 80% size
+          </div>
+          <div className="bg-white p-4 rounded shadow">
+            🧠 Smart image compression with Sharp
+          </div>
+          <div className="bg-white p-4 rounded shadow">
+            ⬇️ Bulk upload & zip download support
+          </div>
+          <div className="bg-white p-4 rounded shadow">
+            🆓 100% Free & works in your browser
+          </div>
+        </div>
+      </section>
       <footer className="mt-16 text-center text-sm text-gray-500 py-6">
         <hr className="mb-4 border-gray-300" />
         <p>

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@img-comparison-slider/react": "^8.0.2",
     "archiver": "^7.0.1",
     "compress-images": "^2.0.5",
     "cookie-parser": "^1.4.7",

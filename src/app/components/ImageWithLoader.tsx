@@ -33,6 +33,7 @@ const ImageWithLoader = ({
 
   const originalKB = item.originalSize / 1024;
   const compressedKB = item.compressedSize / 1024;
+  const [zoom, setZoom] = useState(1);
 
   return (
     <>
@@ -73,12 +74,79 @@ const ImageWithLoader = ({
             </button>
 
             <div className="relative">
-              <ImgComparisonSlider>
+              <div className="absolute top-4 left-4 flex items-center gap-2 z-20 bg-white/90 p-2 rounded shadow-md">
+                <span className="text-sm font-semibold text-gray-700 mr-2">
+                  Zoom:
+                </span>
+
+                <button
+                  onClick={() => setZoom((z) => Math.max(z - 0.2, 1))}
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded p-2 transition"
+                  title="Zoom out"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M20 12H4"
+                    />
+                  </svg>
+                </button>
+
+                <button
+                  onClick={() => setZoom((z) => Math.min(z + 0.2, 5))}
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded p-2 transition"
+                  title="Zoom in"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                </button>
+
+                {zoom > 1 && (
+                  <button
+                    onClick={() => setZoom(1)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded p-2 transition"
+                    title="Reset zoom"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
+
+              <ImgComparisonSlider
+                style={
+                  {
+                    "--divider-color": "#7d7d7dd1",
+                    "--divider-width": "2px",
+                    "--default-handle-color": "#7d7d7dd1",
+                    "--default-handle-width": "80px",
+                  } as React.CSSProperties
+                }
+              >
                 <img
                   slot="first"
                   src={originalBase64}
                   style={{
-                    transform: "scale(3)",
+                    transform: `scale(${zoom})`,
                     transformOrigin: "center center",
                   }}
                   alt="Original"
@@ -87,11 +155,24 @@ const ImageWithLoader = ({
                   slot="second"
                   src={compressedBase64}
                   style={{
-                    transform: "scale(3)",
+                    transform: `scale(${zoom})`,
                     transformOrigin: "center center",
                   }}
                   alt="Compressed"
                 />
+                <svg
+                  {...{ slot: "handle" }}
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="100"
+                  viewBox="-8 -3 16 6"
+                >
+                  <path
+                    stroke="#7d7d7dd1"
+                    d="M -5 -2 L -7 0 L -5 2 M -5 -2 L -5 2 M 5 -2 L 7 0 L 5 2 M 5 -2 L 5 2"
+                    fill="#7d7d7dd1"
+                    vectorEffect="non-scaling-stroke"
+                  ></path>
+                </svg>
               </ImgComparisonSlider>
 
               <span className="absolute bottom-4 left-4 text-xs text-white bg-blue-500 px-3 py-1.5 rounded-full font-bold text-center w-max">

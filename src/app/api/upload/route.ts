@@ -30,9 +30,10 @@ export async function POST(req: NextRequest) {
       const buffer = Buffer.from(arrayBuffer);
       const fileExt = path.extname(file.name);
       const filename = `${Date.now()}-${uuidv4()}${fileExt}`;
+      const originalName = file.name;
 
-      const originalPath = path.join(inputDir, filename);
-      const compressedPath = path.join(outputDir, filename);
+      const originalPath = path.join(inputDir, originalName);
+      const compressedPath = path.join(outputDir, originalName);
 
       // Save original
       await fs.writeFile(originalPath, buffer);
@@ -40,10 +41,12 @@ export async function POST(req: NextRequest) {
       // Compress
       await sharp(buffer).jpeg({ quality: 50 }).toFile(compressedPath);
 
-      const compressedBuffer = await fs.readFile(compressedPath);
-
+      let compressedBuffer = await fs.readFile(compressedPath);
+      if (buffer.length < compressedBuffer.length) {
+        compressedBuffer = buffer;
+      }
       return {
-        filename,
+        filename: originalName,
         originalSize: buffer.length,
         compressedSize: compressedBuffer.length,
         // These won't be public URLs, but just for your frontend to show previews
